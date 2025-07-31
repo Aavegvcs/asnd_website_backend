@@ -10,10 +10,10 @@ dotenv.config();
 const app = express();
 
 
-  // const privateKey = fs.readFileSync('/home/ec2-user/ssl/private.key', 'utf8');
-  // const certificate = fs.readFileSync('/home/ec2-user/ssl/fullchain.pem', 'utf8');
-const certificate = fs.readFileSync('ssl\\fullchain.pem', 'utf8');
-const privateKey = fs.readFileSync('ssl\\private.key', 'utf8');
+  const privateKey = fs.readFileSync('/home/ec2-user/ssl/private.key', 'utf8');
+  const certificate = fs.readFileSync('/home/ec2-user/ssl/fullchain.pem', 'utf8');
+// const certificate = fs.readFileSync('ssl\\fullchain.pem', 'utf8');
+// const privateKey = fs.readFileSync('ssl\\private.key', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 //let httpsServer = https.createServer(credentials,app);
@@ -25,7 +25,7 @@ server.headersTimeout = 20000;      // Should be a bit more than keepAliveTimeou
 
 server.listen(process.env.PORT, () => {
   console.log(
-    `HTTP/HTTPS Server running on port ${process.env.PORT} (HTTP) and 3001 (HTTPS)`
+    `HTTP/HTTPS Server running on port ${process.env.PORT}`
   );
 });
 
