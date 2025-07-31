@@ -4,27 +4,55 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const sendEmailRoutes = require("./routes/sendEmailRoutes");
 const bodyParser =require("body-parser");
-
+const httpolyglot = require('httpolyglot');
+const fs = require("fs");
 dotenv.config();
 const app = express();
+
+
+  // const privateKey = fs.readFileSync('/home/ec2-user/ssl/private.key', 'utf8');
+  // const certificate = fs.readFileSync('/home/ec2-user/ssl/fullchain.pem', 'utf8');
+const certificate = fs.readFileSync('ssl\\fullchain.pem', 'utf8');
+const privateKey = fs.readFileSync('ssl\\private.key', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+
+//let httpsServer = https.createServer(credentials,app);
+const server = httpolyglot.createServer(credentials, app);
+
+
+server.keepAliveTimeout = 20000;    // 65 seconds (default is 5s, which is low for modern apps)
+server.headersTimeout = 20000;      // Should be a bit more than keepAliveTimeout
+
+server.listen(process.env.PORT, () => {
+  console.log(
+    `HTTP/HTTPS Server running on port ${process.env.PORT} (HTTP) and 3001 (HTTPS)`
+  );
+});
+
+
+
 
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.error("MongoDB error:", err));
+mongoose.set('strictPopulate', false);
+mongoose.set("strictQuery", false);
+mongoose
+  .connect(process.env.MONGO_URI, { dbName: process.env.DB_NAME })
+  .then((connection) => {
+    console.log(`Connection Established with ${process.env.DB_NAME} database`);
+  })
+  .catch((error) => {
+    console.log(error);
+});
 
 // Routes
 app.use("/api", sendEmailRoutes);
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${process.env.PORT}`);
-});
+// // Start server
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${process.env.PORT}`);
+// });
