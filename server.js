@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const sendEmailRoutes = require("./routes/sendEmailRoutes");
+const subscribeEmailRoute = require("./routes/subscribeEmailRoutes")
 const bodyParser =require("body-parser");
 const httpolyglot = require('httpolyglot');
 const fs = require("fs");
@@ -10,24 +11,24 @@ dotenv.config();
 const app = express();
 
 
-  const privateKey = fs.readFileSync('/home/ec2-user/ssl/private.key', 'utf8');
-  const certificate = fs.readFileSync('/home/ec2-user/ssl/fullchain.pem', 'utf8');
+//   const privateKey = fs.readFileSync('/home/ec2-user/ssl/private.key', 'utf8');
+//   const certificate = fs.readFileSync('/home/ec2-user/ssl/fullchain.pem', 'utf8');
 // const certificate = fs.readFileSync('ssl\\fullchain.pem', 'utf8');
 // const privateKey = fs.readFileSync('ssl\\private.key', 'utf8');
-const credentials = { key: privateKey, cert: certificate };
+// const credentials = { key: privateKey, cert: certificate };
 
 //let httpsServer = https.createServer(credentials,app);
-const server = httpolyglot.createServer(credentials, app);
+// const server = httpolyglot.createServer(credentials, app);
 
 
-server.keepAliveTimeout = 20000;    // 65 seconds (default is 5s, which is low for modern apps)
-server.headersTimeout = 20000;      // Should be a bit more than keepAliveTimeout
+// server.keepAliveTimeout = 20000;    // 65 seconds (default is 5s, which is low for modern apps)
+// server.headersTimeout = 20000;      // Should be a bit more than keepAliveTimeout
 
-server.listen(process.env.PORT, () => {
-  console.log(
-    `HTTP/HTTPS Server running on port ${process.env.PORT}`
-  );
-});
+// server.listen(process.env.PORT, () => {
+//   console.log(
+//     `HTTP/HTTPS Server running on port ${process.env.PORT}`
+//   );
+// });
 
 
 
@@ -50,9 +51,10 @@ mongoose
 
 // Routes
 app.use("/api", sendEmailRoutes);
+app.use("/api",subscribeEmailRoute)
 
-// // Start server
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => {
-//   console.log(`Server running on http://localhost:${process.env.PORT}`);
-// });
+// Start server
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
