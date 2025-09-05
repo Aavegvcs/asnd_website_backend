@@ -8,4 +8,4 @@ const contactSchema = new mongoose.Schema({
   message: { type: String },
 }, { timestamps: true, versionKey: false });
 
-module.exports = mongoose.model("Contact", contactSchema);
+module.exports = mongoose.model("Contacts", contactSchema);
